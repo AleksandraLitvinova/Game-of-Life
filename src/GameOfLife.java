@@ -14,6 +14,7 @@ public class GameOfLife {
     boolean[][] nextGeneration = new boolean[LIFE_SIZE][LIFE_SIZE];//массив слудующего поколения
     Canvas canvasPanel;
     Random random = new Random();
+    volatile boolean goNextGeneration = false;
 
     public static void main(String[] args) {
         new GameOfLife().go();//запускаем класс на исполнение
@@ -35,22 +36,51 @@ public class GameOfLife {
         JButton stepButton = new JButton("Step");//кнопка для шага
         stepButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //processOfLife();
+                processOfLife();
                 canvasPanel.repaint();
             }
         });
 
         final JButton goButton = new JButton("Play");
+        goButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                goNextGeneration = !goNextGeneration;
+                goButton.setText(goNextGeneration ? "Stop" : "Play");
+            }
+        });
+
+        /*final JButton cleanButton = new JButton("Clean");
+        cleanButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                resetGrid();
+                canvasPanel.repaint();
+            }
+        });*/
 
         JPanel btnPanel = new JPanel();//панель для кнопок
         btnPanel.add(fillButton);//добавляем кнопку на панель
         btnPanel.add(stepButton);
         btnPanel.add(goButton);
+        //btnPanel.add(cleanButton);
 
         frame.getContentPane().add(BorderLayout.CENTER, canvasPanel);
         frame.getContentPane().add(BorderLayout.SOUTH, btnPanel);
         frame.setVisible(true);//видимость окна
+
+        //бесконечный цикл жизни
+        while (true) {
+            if (goNextGeneration) {//если значение переменной истина
+                processOfLife();//делается шаг
+                canvasPanel.repaint();//перерисовывается панель
+                try {//делается задержка
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
+
         // случайное заполнение
         public class FillButtonListener implements ActionListener {
             public void actionPerformed(ActionEvent ev) {
@@ -63,8 +93,26 @@ public class GameOfLife {
             }
         }
 
+        // подсчет количества соседей
+        int countNeighbors(int x, int y) {
+            int count = 0;
+            for (int dx = -1; dx < 2; dx++) {
+                for (int dy = -1; dy < 2; dy++) {
+                    int nX = x + dx;
+                    int nY = y + dy;
+                    nX = (nX < 0) ? LIFE_SIZE - 1 : nX;
+                    nY = (nY < 0) ? LIFE_SIZE - 1 : nY;
+                    nX = (nX > LIFE_SIZE - 1) ? 0 : nX;
+                    nY = (nY > LIFE_SIZE - 1) ? 0 : nY;
+                    count += (lifeGeneration[nX][nY]) ? 1 : 0;
+                }
+            }
+            if (lifeGeneration[x][y]) { count--; }//ели ячейка жива и в ней что то есть
+            return count;
+        }
+
         // основной процесс жизни
-        /*void processOfLife() {
+        void processOfLife() {
             for (int x = 0; x < LIFE_SIZE; x++) {
                 for (int y = 0; y < LIFE_SIZE; y++) {
                     int count = countNeighbors(x, y);//считает количество соседей клетки
@@ -72,14 +120,13 @@ public class GameOfLife {
                     //если количество соседей равно 3, то в ячейке появляется новая клетка иначе ее содержимое остается прежним
                     nextGeneration[x][y] = (count == 3) ? true : nextGeneration[x][y];
                     //если колличесво соседей у клетки меньше 2 или больше 3, то клетка умирает иначе содержимое ячейки остается прежним
-                    // if cell has less than 2 or greater than 3 neighbors - it will be die
                     nextGeneration[x][y] = ((count < 2) || (count > 3)) ? false : nextGeneration[x][y];
                 }
             }
             for (int x = 0; x < LIFE_SIZE; x++) {
                 System.arraycopy(nextGeneration[x], 0, lifeGeneration[x], 0, LIFE_SIZE);
             }
-        }*/
+        }
 
     // отрисовка
     public class Canvas extends JPanel{
