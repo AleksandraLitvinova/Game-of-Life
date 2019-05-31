@@ -1,9 +1,8 @@
-Для сборки программы Game of life необходимо установить Java SE Development Kit 8u202 который доступен 
+Для сборки программы Game-of-life необходимо установить Java SE Development Kit 8u202 который доступен 
 по ссылке https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
-Команды которые надо выполнить что бы собрать проект
-для сборки запустить скрипт build.bat
+Для сборки запустить скрипт build.bat
 
-Для запуска программы Game of life необходимо установить Java SE Runtime Environment 8u202 который доступен по ссылке https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+Для запуска программы Game-of-life необходимо установить Java SE Runtime Environment 8u202 который доступен по ссылке https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
 
-Для запуска программы использовать скрипт build.bat находящийся в директории Game of life/Desktop
+Для запуска программы использовать скрипт Game-of-life.bat находящийся в директории Game-of-life/bin
